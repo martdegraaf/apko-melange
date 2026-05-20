@@ -12,7 +12,8 @@ var app = builder.Build();
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild",
-    "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    "Warm", "Balmy", "Hot", "Sweltering", "Scorching",
+    "Windy"
 };
 
 app.MapGet("/", () => new AppInfo(
