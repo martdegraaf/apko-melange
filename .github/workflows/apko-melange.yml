@@ -65,6 +65,15 @@ jobs:
               /work/output.tar \
               --arch x86_64
 
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-apko-melange-${{ github.run_number }}
+          path: |
+            apko/sbom-*.spdx.json
+            apko/sbom-index.spdx.json
+          if-no-files-found: error
+
       - name: Load and verify image
         run: |
           docker load -i "${{ github.workspace }}/apko/output.tar"
