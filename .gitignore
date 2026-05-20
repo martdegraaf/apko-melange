@@ -1,0 +1,6 @@
+apko/output/
+apko/packages/
+apko/output.tar
+bin/
+obj/
+*.user

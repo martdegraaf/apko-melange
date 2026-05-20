@@ -1,0 +1,25 @@
+package:
+  name: weather-api
+  version: 1.0.0
+  epoch: 0
+  description: ".NET 10 AOT Weather API"
+  copyright:
+    - license: MIT
+  target-architecture:
+    - x86_64
+
+environment:
+  contents:
+    repositories:
+      - https://packages.wolfi.dev/os
+    keyring:
+      - https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
+    packages:
+      - wolfi-baselayout
+      - busybox
+
+pipeline:
+  - runs: |
+      mkdir -p ${{targets.destdir}}/app
+      cp -r /home/build/output/* ${{targets.destdir}}/app/
+      chmod +x ${{targets.destdir}}/app/WeatherApi

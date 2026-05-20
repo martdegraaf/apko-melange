@@ -1,0 +1,73 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "sbom-sha256:681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2026-05-13T20:49:35Z",
+    "creators": [
+      "Tool: apko (v1.2.12+dirty)",
+      "Organization: Chainguard, Inc"
+    ],
+    "licenseListVersion": "3.27"
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://spdx.org/spdxdocs/apko/",
+  "documentDescribes": [
+    "SPDXRef-Package-sha256-681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f"
+  ],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-sha256-681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f",
+      "name": "sha256:681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f",
+      "versionInfo": "sha256:681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f",
+      "filesAnalyzed": false,
+      "description": "Multi-arch image index",
+      "downloadLocation": "NOASSERTION",
+      "supplier": "Organization: Chainguard, Inc.",
+      "sourceInfo": "Generated at image build time by apko",
+      "primaryPackagePurpose": "CONTAINER",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f"
+        }
+      ],
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:oci/weather-apko@sha256:681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f?mediaType=application%2Fvnd.oci.image.index.v1%2Bjson",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-sha256-e0042f45239045403f7a7d6393731f24eeeb025da4462a6816b6a0825d9cce54",
+      "name": "sha256:e0042f45239045403f7a7d6393731f24eeeb025da4462a6816b6a0825d9cce54",
+      "versionInfo": "sha256:e0042f45239045403f7a7d6393731f24eeeb025da4462a6816b6a0825d9cce54",
+      "filesAnalyzed": false,
+      "downloadLocation": "NOASSERTION",
+      "supplier": "Organization: Chainguard, Inc.",
+      "primaryPackagePurpose": "CONTAINER",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "e0042f45239045403f7a7d6393731f24eeeb025da4462a6816b6a0825d9cce54"
+        }
+      ],
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:oci/weather-apko@sha256:e0042f45239045403f7a7d6393731f24eeeb025da4462a6816b6a0825d9cce54?arch=amd64\u0026mediaType=application%2Fvnd.oci.image.manifest.v1%2Bjson\u0026os=linux",
+          "referenceType": "purl"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-Package-sha256-681d5cf43e3d876777ec26f3fa0632e3e9f12f4e4303f9eb6cf3e49ba385525f",
+      "relationshipType": "VARIANT_OF",
+      "relatedSpdxElement": "SPDXRef-Package-sha256-e0042f45239045403f7a7d6393731f24eeeb025da4462a6816b6a0825d9cce54"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+name: Build apko/melange image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/WeatherApi/**'
+      - 'apko/**'
+      - '.github/workflows/apko-melange.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/WeatherApi/**'
+      - 'apko/**'
+      - '.github/workflows/apko-melange.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install AOT prerequisites
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Build .NET 10 AOT app
+        run: |
+          dotnet publish src/WeatherApi/WeatherApi.csproj \
+            -c Release \
+            -o apko/output \
+            -r linux-x64 \
+            -p:PublishAot=true \
+            -p:InvariantGlobalization=true
+
+      - name: Build APK package with melange
+        run: |
+          docker run --rm --privileged \
+            -v "${{ github.workspace }}/apko:/work" \
+            -v "${{ github.workspace }}/apko/output:/home/build/output" \
+            -w /work \
+            cgr.dev/chainguard/melange \
+            build melange.yaml \
+              --arch x86_64 \
+              --signing-key melange.rsa \
+              --out-dir /work/packages
+
+      - name: Build OCI image with apko
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/apko:/work" \
+            -w /work \
+            cgr.dev/chainguard/apko \
+            build apko.yaml \
+              "weather-apko:latest" \
+              /work/output.tar \
+              --arch x86_64
+
+      - name: Load and verify image
+        run: |
+          docker load -i "${{ github.workspace }}/apko/output.tar"
+          docker images | grep weather-apko
+          echo "Image size:"
+          docker images weather-apko --format "{{.Size}}"
+
+      - name: Smoke test
+        run: |
+          docker run -d --name smoke-test -p 8080:8080 weather-apko:latest-amd64
+          sleep 3
+          curl -sf http://localhost:8080/ | jq .
+          curl -sf http://localhost:8080/weatherforecast | jq .
+          docker stop smoke-test
+          docker rm smoke-test
