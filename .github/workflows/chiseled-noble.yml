@@ -1,0 +1,71 @@
+name: Build chiseled noble image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/WeatherApi/**'
+      - 'chiseled/**'
+      - '.github/workflows/chiseled-noble.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/WeatherApi/**'
+      - 'chiseled/**'
+      - '.github/workflows/chiseled-noble.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image with Dockerfile (noble chiseled)
+        run: |
+          docker build \
+            -f chiseled/Dockerfile \
+            -t weather-chiseled:latest \
+            .
+
+      - name: Show image size
+        id: image_size
+        run: |
+          IMAGE_SIZE=$(docker image inspect weather-chiseled:latest --format='{{.Size}}')
+          IMAGE_SIZE_MB=$(awk "BEGIN {printf \"%.2f\", ${IMAGE_SIZE}/1024/1024}")
+
+          echo "image_size_bytes=${IMAGE_SIZE}" >> "$GITHUB_OUTPUT"
+          echo "image_size_mb=${IMAGE_SIZE_MB}" >> "$GITHUB_OUTPUT"
+
+          echo "Image size (bytes): ${IMAGE_SIZE}"
+          echo "Image size (MB): ${IMAGE_SIZE_MB}"
+
+          {
+            echo "## Chiseled Image Size"
+            echo
+            echo "- Image: weather-chiseled:latest"
+            echo "- Size (bytes): ${IMAGE_SIZE}"
+            echo "- Size (MB): ${IMAGE_SIZE_MB}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          printf "image=weather-chiseled:latest\nsize_bytes=%s\nsize_mb=%s\n" "${IMAGE_SIZE}" "${IMAGE_SIZE_MB}" > chiseled-image-size.txt
+
+      - name: Upload size artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chiseled-image-size-${{ github.run_number }}
+          path: chiseled-image-size.txt
+          if-no-files-found: error
+
+      - name: Smoke test
+        run: |
+          docker run -d --name smoke-test-chiseled -p 8080:8080 weather-chiseled:latest
+          sleep 3
+          curl -sf http://localhost:8080/ | jq .
+          curl -sf http://localhost:8080/weatherforecast | jq .
+          docker stop smoke-test-chiseled
+          docker rm smoke-test-chiseled
